@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-cicd-web-test
+spec:
+  replicas: RSCOUNT
+  selector:
+    matchLabels:
+      app: jenkins-cicd-web-test
+  template:
+    metadata:
+      labels:
+        app: jenkins-cicd-web-test
+    spec:
+      containers:
+      - name: jenkins-cicd-web-test
+        image: IMAGE_NAME
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: SECRET_NAME
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: NS
+  labels:
+    name: jenkins-cicd-web-test
+  name: jenkins-cicd-web-test
+spec:
+  type: NodePort
+  ports:
+  - name: jenkins-cicd-web-test
+    port: 8080
+    targetPort: 8080
+    nodePort: 30188
+  selector:
+    app: jenkins-cicd-web-test
